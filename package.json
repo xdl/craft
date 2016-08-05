@@ -1,0 +1,10 @@
+{
+    "name": "craft",
+    "version": "0.0.1",
+    "dependencies": {
+        "marked": "0.3.x",
+        "mustache": "2.2.x",
+        "yamljs": "0.x.x",
+        "chai": "*"
+    }
+}
