@@ -5,6 +5,6 @@
         "marked": "0.3.x",
         "mustache": "2.2.x",
         "yamljs": "0.x.x",
-        "chai": "*"
+        "commander": "2.9.x"
     }
 }

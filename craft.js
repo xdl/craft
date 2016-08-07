@@ -1,12 +1,13 @@
 //Dependencies
 var fs = require('fs');
 var path = require('path');
+var program = require('commander');
 
 var FrontMatter = require('./lib/frontmatter.js');
-var cfs = require('./lib/copyfiles.js');
-var pcs = require('./lib/processcontents.js');
-var tpl = require('./lib/transpiler.js');
-var mtdt = require('./lib/metadata.js');
+var CopyFiles = require('./lib/copyfiles.js');
+var ProcessContents = require('./lib/processcontents.js');
+var Transpiler = require('./lib/transpiler.js');
+var Metadata = require('./lib/metadata.js');
 
 //Special filenames, directories
 var LAYOUTS_FILENAME = "_layouts";
@@ -22,7 +23,7 @@ var craft = function(origin_path, dst_path, url) {
     environment.root = origin_path; 
     environment.config = config;
     environment.url = url;
-    environment.site = mtdt.createRootNode();
+    environment.site = Metadata.createRootNode();
     environment.layouts = {};
     environment.transpilers = {};
 
@@ -35,13 +36,13 @@ var craft = function(origin_path, dst_path, url) {
     }
 
     console.log("Processing inert files...");
-    cfs.copyInertFiles(origin_path,dst_path,toCopy);
+    CopyFiles.copyInertFiles(origin_path,dst_path,toCopy);
 
     //2. Doing a postorder traversal of files that might need processing:
     var setTranspilers = function(_transpilers, trans_directory) {
         fs.readdirSync(trans_directory).forEach(function(filename) {
             var transpiler_path = path.join(trans_directory, filename);
-            var transpilers = tpl.createMustacheWrappers(transpiler_path, environment);
+            var transpilers = Transpiler.createMustacheWrappers(transpiler_path, environment);
             for (var transpiler in transpilers) {
                 if (transpilers.hasOwnProperty(transpiler)) {
                     _transpilers[transpiler] = transpilers[transpiler];
@@ -104,7 +105,7 @@ var craft = function(origin_path, dst_path, url) {
             var new_transpilers = Object.create(old_transpilers);
             environment.transpilers = new_transpilers;
 
-            var child = mtdt.addDirNodeTo(parent, dir)
+            var child = Metadata.addDirNodeTo(parent, dir)
 
             visit(current_path, target_path, child);
 
@@ -119,16 +120,16 @@ var craft = function(origin_path, dst_path, url) {
                 var fm = fm_contents[0];
                 var contents = fm_contents[1];
 
-                mtdt.addFileNodeTo(parent, fm);
-                mtdt.preProcess(fm, environment);
+                Metadata.addFileNodeTo(parent, fm);
+                Metadata.preProcess(fm, environment);
 
-                var processed_dstfilename = pcs.processContents(contents, current_path, environment);
+                var processed_dstfilename = ProcessContents.processContents(contents, current_path, environment);
                 var processed = processed_dstfilename[0];
                 var dstfilename = processed_dstfilename[1];
                 var target_path = path.join(dst_path, dstfilename);
                 fs.writeFileSync(target_path, processed);
             } else {
-                cfs.copyFileIntoDirSync(current_path, dst_path);
+                CopyFiles.copyFileIntoDirSync(current_path, dst_path);
             }
         });
     }
@@ -141,8 +142,28 @@ exports.craft = craft;
 
 //http://stackoverflow.com/questions/4981891/node-js-equivalent-of-pythons-if-name-main
 if (require.main === module) {
-    var origin_path = process.argv[2];
-    var dst_path = process.argv[3];
-    var url = process.argv[4];
-    craft(origin_path, dst_path, url);
+    var src;
+    var dst;
+    var url;
+    program
+    .version('0.0.1')
+    .description('Runs the craft command line tool')
+    .arguments('<source> <destination> [url_root]')
+    .action(function(source, destination, url_root) {
+        src = source;
+        dst = destination;
+        if (url_root) {
+            url = url_root;
+        } else {
+            url = "";
+        }
+    })
+    .parse(process.argv);
+
+    if (typeof src === 'undefined' || dst === 'undefined') {
+       program.outputHelp();
+       process.exit(0);
+
+    }
+    craft(src, dst, url);
 }

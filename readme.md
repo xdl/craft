@@ -1,4 +1,4 @@
-# Craft
+# craft
 
 Static site generator from Markdown, with custom text transformer support via tags.
 
