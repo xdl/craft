@@ -123,7 +123,7 @@ Arguments passed through are the text that's been wrapped and the `environment` 
 
 This allows article-specific tags to be defined on the fly, where you can be as rigorous or as lax as you want regarding the lexing/parsing. The `environment` object can also be mutated (for page-specific information, consider modifying `env.page` as this will get discarded when processing the next page.
 
-See [here](get link) for an example of of a bidirectional, auto-incrementing footnote system, implemented in ~30 LoC.
+See [here](https://github.com/xdl/xiaodili_website/blob/master/src/blog/_transpilers/footnotes.js) for an example of a bidirectional, auto-incrementing footnote system, implemented in ~30 LoC.
 
 Note that for brevity of authoring, transpilers are 'lifted' at the top level of the environment object given to the Mustache renderer, so avoid exporting transpiler functions with names that may clash with top level environment keys (e.g. `site` and `page`).
 
@@ -198,7 +198,7 @@ With a version of Node that's >= v0.11.15, do:
 
 Run with:
 
-    node craft.js <src> <dist> <url>
+    node craft.js <src> <dist> [url]
 
 The `url` argument is attached to the environment as `environment.url` and can be used to prepend to `script` and `link` tags - e.g. for local development, you might run:
 
