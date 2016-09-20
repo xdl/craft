@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {{#styles}}
+        <link rel="stylesheet" href="{{url}}/{{.}}" type="text/css" media="all"/>
+        {{/styles}}
+        {{#scripts}}
+        <script type="text/javascript" src="{{url}}/{{.}}"></script>
+        {{/scripts}}
+    </head>
+    <body>
+        {{{contents}}}
+    </body>
+</html>

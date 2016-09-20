@@ -12,8 +12,9 @@ var Metadata = require('./lib/metadata.js');
 //Special filenames, directories
 var LAYOUTS_FILENAME = "_layouts";
 var TRANSPILERS_FILENAME = "_transpilers";
-var DEFAULT_IGNORES = [LAYOUTS_FILENAME, TRANSPILERS_FILENAME];
 var CONFIG_FILENAME = "config.json";
+var DEFAULT_EXTENSIONS_TO_PROCESS = [".md", ".html"];
+var DEFAULT_IGNORES = [LAYOUTS_FILENAME, TRANSPILERS_FILENAME, CONFIG_FILENAME];
 
 var craft = function(origin_path, dst_path, url) {
     //0. Setting up environment:
@@ -27,12 +28,22 @@ var craft = function(origin_path, dst_path, url) {
     environment.layouts = {};
     environment.transpilers = {};
 
+    if (environment.config.ignored_filenames) {
+        environment.config.ignored_filenames = environment.config.ignored_filenames.concat(DEFAULT_IGNORES);
+    } else {
+        environment.config.ignored_filenames = DEFAULT_IGNORES;
+    }
+
+    if (environment.config.ext_to_process) {
+        environment.config.ext_to_process = environment.config.ext_to_process.concat(DEFAULT_EXTENSIONS_TO_PROCESS);
+    } else {
+        environment.config.ext_to_process = DEFAULT_EXTENSIONS_TO_PROCESS;
+    }
+
     //1. copying over the files that don't need processing:
     var toCopy = function(file) {
         //ignore file and directories with names mentioned in ignored_files, and extensions that might contain front matter for processing
-        var ignored_files = environment.config.ignored_filenames.concat(DEFAULT_IGNORES);
-        var ext_to_process = environment.config.ext_to_process;
-        return !(ignored_files.indexOf(file) >= 0) && !(ext_to_process.indexOf(path.extname(file)) >= 0)
+        return !(environment.config.ignored_filenames.indexOf(file) >= 0) && !(environment.config.ext_to_process.indexOf(path.extname(file)) >= 0)
     }
 
     console.log("Processing inert files...");
@@ -61,13 +72,11 @@ var craft = function(origin_path, dst_path, url) {
     };
 
     var toProcess = function(file) {
-        var ext_to_process = environment.config.ext_to_process;
-        return (ext_to_process.indexOf(path.extname(file)) >= 0);
+        return (environment.config.ext_to_process.indexOf(path.extname(file)) >= 0);
     };
 
     var toIgnore = function(file) {
-        var ignored_files = environment.config.ignored_filenames.concat(DEFAULT_IGNORES);
-        return (ignored_files.indexOf(file) >= 0);
+        return (environment.config.ignored_filenames.indexOf(file) >= 0);
     };
 
     var visit = function(src_path, dst_path, parent) {
