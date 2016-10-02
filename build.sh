@@ -2,4 +2,4 @@
 
 # Runs craft.js on the test source
 
-pushd ~/dev/craft && node craft.js test/test_src test/test_dst http://localhost && popd
+pushd ~/dev/craft && sudo node craft.js ~/dev/craft/test/test_src ~/dev/craft/test/test_dst http://localhost && popd

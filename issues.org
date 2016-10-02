@@ -1,3 +1,13 @@
+#+STARTUP: showall
+
 * Issues
 
-* TODO Support external script inclusions in front matter
+** TODO Support external script inclusions in front matter
+** TODO Support relative paths for craft
+** TODO Add a logger and a ~verbose~ flag
+** DONE Learn how Node debugging works
+   CLOSED: [2016-09-27 Tue 09:56]
+   That was really interesting! https://nodejs.org/api/debugger.html
+** DONE Put helper functions in ~env~ object
+   CLOSED: [2016-09-26 Mon 22:10]
+   Put in ~hoistKey~

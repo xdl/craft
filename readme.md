@@ -1,6 +1,6 @@
 # craft
 
-Static site generator from Markdown, with custom text transformer support via tags.
+Static site generator from Markdown, with customisable text transformer support via user-defined tags.
 
 ## Convention
 
@@ -123,7 +123,7 @@ Arguments passed through are the text that's been wrapped and the `environment` 
 
 This allows article-specific tags to be defined on the fly, where you can be as rigorous or as lax as you want regarding the lexing/parsing. The `environment` object can also be mutated (for page-specific information, consider modifying `env.page` as this will get discarded when processing the next page.
 
-See [here](https://github.com/xdl/xiaodili_website/blob/master/src/blog/_transpilers/footnotes.js) for an example of a bidirectional, auto-incrementing footnote system, implemented in ~30 LoC.
+See [here](https://github.com/xdl/xiaodili_website/blob/master/src/_transpilers/footnotes.js) for an example of a bidirectional, auto-incrementing footnote system, implemented in ~30 LoC.
 
 Note that for brevity of authoring, transpilers are 'lifted' at the top level of the environment object given to the Mustache renderer, so avoid exporting transpiler functions with names that may clash with top level environment keys (e.g. `site` and `page`).
 
@@ -143,6 +143,10 @@ Files can contain metadata-related variables ('front matter') in YAML-format tha
 
 Like Jekyll, all files with the metadata defined (wrapped around `---`) will be subject to processing and templating.
 
+`.md` files are templated, then are processed with `marked`, whereas `.html` files are only templated.
+
+## Environment
+
 The environment object is available in all files, which comes with the following reserved keys that may come in useful:
 
 * `page`: metadata defined in the current file
@@ -151,8 +155,6 @@ The environment object is available in all files, which comes with the following
     * `export_to`: the file's metadata will be also appended into the `exports` list of the of the given node in `site`
 * `url`: the root of the site (passed in from the command line)
 * `site`: other files' metadata that `craft` has been populated with during its directory traversal
-
-`.md` files are templated, then are processed with `marked`, whereas `.html` files are only templated.
 
 ### Aggregations
 

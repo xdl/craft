@@ -24,9 +24,13 @@ var craft = function(origin_path, dst_path, url) {
     environment.root = origin_path; 
     environment.config = config;
     environment.url = url;
-    environment.site = Metadata.createRootNode();
+    environment.site = Metadata.createRootNode(origin_path);
     environment.layouts = {};
     environment.transpilers = {};
+    environment.page = null; //this will be populated on traversal
+    environment.helpers = {
+        hoistKey: ProcessContents.hoistKey
+    };
 
     if (environment.config.ignored_filenames) {
         environment.config.ignored_filenames = environment.config.ignored_filenames.concat(DEFAULT_IGNORES);
@@ -122,6 +126,7 @@ var craft = function(origin_path, dst_path, url) {
             environment.transpilers = old_transpilers;
             environment.layouts = old_layouts;
         });
+        //finally, process the files
         files_next.forEach(function(file) {
             var current_path = path.join(src_path, file);
             if (FrontMatter.containsFrontMatter(current_path)) {
